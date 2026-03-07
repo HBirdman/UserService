@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Параметры подключения к базе данных -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">Aspirin1</property>
+
+        <!-- Диалект SQL для выбранной СУБД -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <!-- Вывод SQL-запросов в консоль (удобно для отладки) -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Стратегия обновления схемы БД при запуске приложения -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Здесь будут указаны классы сущностей -->
+        <mapping class="aston.homework.model.User"/>
+    </session-factory>
+</hibernate-configuration>
