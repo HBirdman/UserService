@@ -5,9 +5,9 @@ import org.hibernate.cfg.Configuration;
 
 
 public class HibernateUtil {
-    private static final SessionFactory sessionFactory = buldSessionFactory();
+    private static SessionFactory sessionFactory;
 
-    private static SessionFactory buldSessionFactory() {
+    private static SessionFactory buildSessionFactory() {
         try {
             return new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
@@ -17,10 +17,29 @@ public class HibernateUtil {
     }
 
     public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            synchronized (HibernateUtil.class) {
+                if (sessionFactory == null) {
+                    sessionFactory = buildSessionFactory();
+                }
+            }
+        }
         return sessionFactory;
     }
 
     public static void shutdown() {
-        getSessionFactory().close();
+        if (sessionFactory != null && !sessionFactory.isClosed()) {
+            sessionFactory.close();
+            sessionFactory = null;
+        }
+    }
+
+    public static void setTestSessionFactory(SessionFactory testFactory) {
+        shutdown(); // Закрываем старую, если была
+        sessionFactory = testFactory;
+    }
+
+    public static void resetToDefault() {
+        shutdown();
     }
 }

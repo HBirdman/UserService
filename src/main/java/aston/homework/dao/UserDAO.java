@@ -13,7 +13,7 @@ public class UserDAO {
 
     private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         Transaction transaction = null;
         Session session = null;
         try {
@@ -24,7 +24,7 @@ public class UserDAO {
             log.info("Пользователь успешно сохранен: {}", user.getName());
 
             transaction.commit();
-
+            return user;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -36,6 +36,7 @@ public class UserDAO {
                 session.close();
             }
         }
+        return null;
     }
 
     public User getUserById(Long id) {
