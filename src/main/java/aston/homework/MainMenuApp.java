@@ -1,9 +1,9 @@
 package aston.homework;
 
-import aston.homework.dao.UserDAO;
+import aston.homework.dao.UserDAOImpl;
 import aston.homework.mapper.UserMapper;
 import aston.homework.service.InputService;
-import aston.homework.service.UserService;
+import aston.homework.service.UserServiceImpl;
 import aston.homework.util.HibernateUtil;
 import lombok.AllArgsConstructor;
 
@@ -14,7 +14,7 @@ public class MainMenuApp {
 
     private static final Scanner scanner = new Scanner(System.in);
     private static final InputService inputService = new InputService
-            (new UserService(new UserDAO(), new UserMapper()));
+            (new UserServiceImpl(new UserDAOImpl(), new UserMapper()));
 
     public static void start() {
         try {

@@ -48,7 +48,7 @@ public class UserDAOTests {
 
     @BeforeEach
     void setUp() {
-        userDAO = new UserDAO();
+        userDAO = new UserDAOImpl();
     }
 
     @AfterAll

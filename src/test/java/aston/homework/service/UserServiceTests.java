@@ -41,7 +41,7 @@ class UserServiceTests {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userDAO, mapper);
+        userService = new UserServiceImpl(userDAO, mapper);
     }
 
     @Test
