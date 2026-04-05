@@ -1,10 +1,7 @@
 package aston.homework.controller;
 
-import java.util.List;
-import aston.homework.model.User;
 import aston.homework.repository.UserRepository;
 import aston.homework.util.UserGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -65,27 +64,25 @@ public class UserControllerTest {
         var data1 = Instancio.of(userGenerator.getUserModel()).create();
         var data2 = Instancio.of(userGenerator.getUserModel()).create();
 
-        var request1 = post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(data1));
-        var request2 = post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(data2));
-        mockMvc.perform(request1)
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(data1)))
                 .andExpect(status().isCreated());
-        mockMvc.perform(request2)
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(data2)))
                 .andExpect(status().isCreated());
 
-        var response = mockMvc.perform(get("/api/users"))
+        // 2. Выполняем GET и проверяем через JSON path
+        mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-        var body = response.getContentAsString();
-
-        List<User> actual = objectMapper.readValue(body, new TypeReference<>() { });
-
-        var expected = userRepository.findAll();
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+                .andExpect(jsonPath("$._embedded.users").isArray())
+                .andExpect(jsonPath("$._embedded.users.length()").value(2))
+                .andExpect(jsonPath("$._embedded.users[*].email").value(
+                        containsInAnyOrder(data1.getEmail(), data2.getEmail())
+                ))
+                .andExpect(jsonPath("$._links.self").exists())
+                .andExpect(jsonPath("$._links.create").exists());
     }
 
     @Test

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = false)
+@Relation(collectionRelation = "users", itemRelation = "user")
 public class UserResponseDTO extends RepresentationModel<UserResponseDTO> {
     @Schema(description = "ID пользователя", example = "1")
     private Long id;
